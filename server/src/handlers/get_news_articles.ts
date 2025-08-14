@@ -1,8 +1,19 @@
+import { db } from '../db';
+import { newsArticlesTable } from '../db/schema';
 import { type NewsArticle } from '../schema';
+import { desc } from 'drizzle-orm';
 
-export async function getNewsArticles(): Promise<NewsArticle[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all news articles from the database.
-    // It should return all articles ordered by creation date (newest first).
-    return Promise.resolve([]);
-}
+export const getNewsArticles = async (): Promise<NewsArticle[]> => {
+  try {
+    // Fetch all news articles ordered by creation date (newest first)
+    const results = await db.select()
+      .from(newsArticlesTable)
+      .orderBy(desc(newsArticlesTable.created_at))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch news articles:', error);
+    throw error;
+  }
+};

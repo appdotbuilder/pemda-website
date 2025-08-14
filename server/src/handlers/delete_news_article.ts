@@ -1,8 +1,19 @@
+import { db } from '../db';
+import { newsArticlesTable } from '../db/schema';
 import { type DeleteNewsArticleInput } from '../schema';
+import { eq } from 'drizzle-orm';
 
 export async function deleteNewsArticle(input: DeleteNewsArticleInput): Promise<boolean> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is deleting a news article from the database by its ID.
-    // It should return true if the article was successfully deleted, or false if no article with the given ID exists.
-    return Promise.resolve(true); // Placeholder return value
+  try {
+    // Delete the news article by ID
+    const result = await db.delete(newsArticlesTable)
+      .where(eq(newsArticlesTable.id, input.id))
+      .execute();
+
+    // Check if any rows were affected (deleted)
+    return (result.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.error('News article deletion failed:', error);
+    throw error;
+  }
 }
